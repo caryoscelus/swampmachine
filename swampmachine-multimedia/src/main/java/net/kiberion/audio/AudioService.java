@@ -36,4 +36,11 @@ public class AudioService {
         channel.playMusic(music);
     }
     
+    @EventListener
+    public void channelControl(ChannelControlEvent e) {
+        log.info("Channel control");
+        Channel channel = mixer.getChannel(e.getChannelId());
+        channel.fade(e.getDuration(), e.getTargetVolume());
+    }
+
 }
