@@ -11,20 +11,15 @@ import net.kiberion.swampmachine.api.common.RealtimeUpdatable;
  */
 public class Mixer implements RealtimeUpdatable {
     /**
-     * Creates new channel
-     */
-    public Channel newChannel(String name) {
-        Channel channel = new Channel();
-        channels.put(name, channel);
-        return channel;
-    }
-    
-    /**
-     * Returns existing channel
-     * TODO: proper error-handling
+     * Returns a channel with a given name, possibly creating it.
      */
     public Channel getChannel(String name) {
-        return channels.get(name);
+        Channel channel = channels.get(name);
+        if (channel == null) {
+            channel = new Channel();
+            channels.put(name, channel);
+        }
+        return channel;
     }
     
     @Override
