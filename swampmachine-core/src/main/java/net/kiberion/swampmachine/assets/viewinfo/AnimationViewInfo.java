@@ -2,8 +2,9 @@ package net.kiberion.swampmachine.assets.viewinfo;
 
 import java.util.Objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import net.kiberion.swampmachine.assets.UiManager;
@@ -13,33 +14,41 @@ import net.kiberion.swampmachine.entities.common.impl.CommonModelEntityDescripto
  * @author kibertoad
  */
 public class AnimationViewInfo extends CommonModelEntityDescriptor {
+    
+    // CHECK THE PATH
+    private final String PATH_PREFIX = "";
+    private final String PATH_SUFFIX = ".jpg";
 
-    public int columns; // how many columns are in file
-    public int rows; // how many rows are in file
+    /**
+     * columns are not columns, but total frame count
+     */
+    public int columns;
+
+    public int rows; // IGNORED
+
     public float frameDuration;
     public Animation animation;
 
     @Override
     public void setImage(String id) {
-        animation = getAnimation(id, columns, rows, frameDuration);
+        animation = getAnimation(id, columns, frameDuration);
     }
 
-    public Animation getAnimation(String image, int imageColumns, int imageRows, float frameDuration) {
-        TextureAtlas.AtlasRegion atlasRegion = UiManager.instance().getImage(image);
-        Objects.requireNonNull(atlasRegion);
+    public Animation getAnimation(String image, int frameCount, float frameDuration) {
+        TextureRegion[] frames = new TextureRegion[frameCount];
 
-        TextureRegion[][] tmp = atlasRegion.split(atlasRegion.getRegionWidth() / imageColumns,
-                atlasRegion.getRegionHeight() / imageRows);
-
-        TextureRegion[] walkFrames = new TextureRegion[imageColumns * imageRows];
-        int index = 0;
-        for (int i = 0; i < imageRows; i++) {
-            for (int j = 0; j < imageColumns; j++) {
-                walkFrames[index++] = tmp[i][j];
-            }
+        for (int i = 0; i < frameCount; ++i) {
+            frames[i] =
+                new TextureRegion(
+                    new Texture(
+                        Gdx.files.internal(
+                            PATH_PREFIX+"/"+image+String.format("%04d", i)+PATH_SUFFIX
+                        )
+                    )
+                );
         }
 
-        Animation animation = new Animation(frameDuration, walkFrames);
+        Animation animation = new Animation(frameDuration, frames);
         return animation;
     }
 
